@@ -84,47 +84,59 @@ const menu =
 ];
 
 const sectionCenter = document.querySelector('.section-center');
-const btns = document.querySelectorAll('.filter-btn');
+
+const buttonCenter =  document.querySelector('.btn-container')
+const categories = menu.reduce(
+    function(values, item){
+   if(!values.includes(item.category)){
+     values.push(item.category)
+   }
+   return values;
+}, ['all'])
 
 
 // load items
 window.addEventListener('DOMContentLoaded', function() {
   displayMenuItems(menu);
+  displayButtons(categories);
 });
 
-// filter buttons
-btns.forEach(function(btn) {
-  btn.addEventListener('click', function(e) {
-    if (e.currentTarget.dataset.store === "bfast") {
-      displayMenuItems(menu.filter(function(e) {
-        return e.category === "breakfast"
-      }));
-    } else if (e.currentTarget.dataset.store === "lunch") {
-      displayMenuItems(menu.filter(function(e) {
-        return e.category === "lunch"
-      }));
-    } else if (e.currentTarget.dataset.store === "shakes") {
-      displayMenuItems(menu.filter(function(e) {
-        return e.category === "shakes"
-      }));
-    } else {
-      displayMenuItems(menu);
-    }
-  });
-})
 
 
 
 
 
+function displayButtons(buttons){
+  let buttonDisplay = buttons.map(function(category){
+    return `<button class="filter-btn" type="button" data-store="${category}">${category}</button>`
+  })
+  buttonDisplay = buttonDisplay.join("");
+  buttonCenter.innerHTML = buttonDisplay;
+  const btns = document.querySelectorAll('.filter-btn');
+  // filter buttons
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      const category = e.currentTarget.dataset.store;
+      const menuCategory = menu.filter(function(menuItem){
+          if(menuItem.category === category) {
+            return menuItem
+          }
+      })
+      console.log(menuCategory);
+      if (category === "all"){
+        displayMenuItems(menu);
+      } else {
+        displayMenuItems(menuCategory)
+      }
+    });
+  })
 
+}
 
 
 
 function displayMenuItems(menuItems) {
   let displayMenu = menuItems.map(function(item) {
-    // console.log(item);
-
     return `  <article class="menu-item">
         <img class="photo" src=${item.img} alt=${item.title}/>
       <div class="item-info">
